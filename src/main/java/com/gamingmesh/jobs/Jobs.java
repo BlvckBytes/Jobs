@@ -1190,7 +1190,7 @@ public final class Jobs extends JavaPlugin {
 				payments.put(CurrencyType.POINTS, pointAmount);
 
 			// FinalPayment event
-			CMIScheduler.runTaskAsynchronously(getInstance(), () -> Bukkit.getServer().getPluginManager().callEvent(new JobsInstancePaymentEvent(jPlayer.getPlayer(), payments)));
+			Bukkit.getServer().getPluginManager().callEvent(new JobsInstancePaymentEvent(jPlayer.getPlayer(), payments));
 			payOut(jPlayer, payments);
 
 			if (gConfigManager.LoggingUse) {
@@ -1357,7 +1357,7 @@ public final class Jobs extends JavaPlugin {
 					payments.put(CurrencyType.EXP, expAmount);
 
 				// FinalPayment event
-				CMIScheduler.runTaskAsynchronously(getInstance(), () -> Bukkit.getServer().getPluginManager().callEvent(new JobsInstancePaymentEvent(jPlayer.getPlayer(), payments)));
+				Bukkit.getServer().getPluginManager().callEvent(new JobsInstancePaymentEvent(jPlayer.getPlayer(), payments));
 
 				payOut(jPlayer, payments);
 

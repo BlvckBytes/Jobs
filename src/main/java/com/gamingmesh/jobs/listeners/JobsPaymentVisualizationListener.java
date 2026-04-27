@@ -18,6 +18,7 @@
 
 package com.gamingmesh.jobs.listeners;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -51,19 +52,14 @@ public class JobsPaymentVisualizationListener implements Listener {
 
     class paymentCache {
 
-        private long lastAction = 0l;
-        private ConcurrentHashMap<CurrencyType, Double> accumulation = new ConcurrentHashMap<>();
-        private ConcurrentHashMap<CurrencyType, Double> lastPayment = new ConcurrentHashMap<>();
-
-        public long getLastAction() {
-            return lastAction;
-        }
+        private long lastAction = 0L;
+        private final Map<CurrencyType, Double> accumulation = new HashMap<>();
 
         public void setLastAction() {
             this.lastAction = System.currentTimeMillis();
         }
 
-        public ConcurrentHashMap<CurrencyType, Double> getPayments() {
+        public Map<CurrencyType, Double> getPayments() {
             return accumulation;
         }
 
@@ -73,9 +69,6 @@ public class JobsPaymentVisualizationListener implements Listener {
             }
             setLastAction();
             payments.forEach((currency, amount) -> accumulation.merge(currency, amount, Double::sum));
-
-            lastPayment.clear();
-            lastPayment.putAll(payments);
         }
     }
 
@@ -221,7 +214,7 @@ public class JobsPaymentVisualizationListener implements Listener {
 
         paymentCache cached = getPaymentCache(player.getUniqueId(), event.getPayment());
 
-        ConcurrentHashMap<CurrencyType, Double> payment = cached.getPayments();
+        Map<CurrencyType, Double> payment = cached.getPayments();
 
         StringBuilder message = new StringBuilder();
 
