@@ -154,10 +154,23 @@ public class RestrictedAreaManager {
         if (player == null)
             return new BoostMultiplier();
 
-        for (RestrictedArea area : getByLocation(player.getLocation())) {
-            if (!area.inRestrictedArea(player.getLocation()) ||
-                (area.getWgName() != null && JobsHook.WorldGuard.isEnabled() && !JobsHook.getWorldGuardManager().inArea(player.getLocation(), area.getWgName())))
+        for (RestrictedArea area : restrictedAreas.values()) {
+            if (!area.isEnabled())
                 continue;
+
+            if (!area.inRestrictedArea(player.getLocation())) {
+                if (!JobsHook.WorldGuard.isEnabled())
+                    continue;
+
+                if (area.getWgName() == null)
+                    continue;
+
+                if (area.getWgWorld() != null && !area.getWgWorld().isEmpty() && !player.getWorld().getName().equalsIgnoreCase(area.getWgWorld()))
+                    continue;
+
+                if (!JobsHook.getWorldGuardManager().inArea(player.getLocation(), area.getWgName()))
+                    continue;
+            }
 
             if (area.getJobs().isEmpty())
                 return new BoostMultiplier(area.getMultipliers());
@@ -167,6 +180,7 @@ public class RestrictedAreaManager {
 
             return new BoostMultiplier(area.getMultipliers());
         }
+
         return new BoostMultiplier();
     }
 
@@ -251,7 +265,7 @@ public class RestrictedAreaManager {
         if (areaSection != null) {
             for (String areaKey : areaSection.getKeys(false)) {
 
-                RestrictedArea area = new RestrictedArea(areaKey, areaKey);
+                RestrictedArea area = new RestrictedArea(areaKey, areaKey, areaSection.getString(areaKey + ".world", "").trim());
 
                 if (!areaSection.isBoolean(areaKey + ".WG")) {
 

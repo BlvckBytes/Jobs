@@ -31,6 +31,7 @@ public class RestrictedArea {
 
     private String name;
     private String wgName;
+    private String wgWorld;
 
     private HashMap<String, LevelLimits> jobs = new HashMap<>();
 
@@ -57,9 +58,10 @@ public class RestrictedArea {
         this.area = area;
     }
 
-    public RestrictedArea(String name, String wgName) {
+    public RestrictedArea(String name, String wgName, String wgWorld) {
         this.name = name;
         this.wgName = wgName;
+        this.wgWorld = wgWorld;
     }
 
     public CuboidArea getCuboidArea() {
@@ -116,6 +118,10 @@ public class RestrictedArea {
 
     public String getWgName() {
         return wgName;
+    }
+
+    public String getWgWorld() {
+        return wgWorld;
     }
 
     public void setWgName(String wgName) {
