@@ -17,7 +17,6 @@ public final class JobsInstancePaymentEvent extends BaseEvent {
     private Map<CurrencyType, Double> payments = new HashMap<>();
 
     public JobsInstancePaymentEvent(OfflinePlayer offlinePlayer, Map<CurrencyType, Double> payments) {
-        super(true);
         this.offlinePlayer = offlinePlayer;
         this.payments = payments;
     }
