@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.sk89q.worldedit.math.BlockVector3;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -54,13 +55,15 @@ public class WorldGuardManager {
     }
 
     public boolean inArea(Location loc, String name) {
+        if (name.equalsIgnoreCase("__global__"))
+            return true;
 
         RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
         RegionManager regions = container.get(BukkitAdapter.adapt(loc.getWorld()));
 
         if (regions != null) {
-            for (ProtectedRegion one : regions.getRegions().values()) {
-                if (one.getId().equalsIgnoreCase(name) && one.contains(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()))
+            for (ProtectedRegion region : regions.getApplicableRegions(BlockVector3.at(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()))) {
+                if (region.getId().equalsIgnoreCase(name))
                     return true;
             }
         }
