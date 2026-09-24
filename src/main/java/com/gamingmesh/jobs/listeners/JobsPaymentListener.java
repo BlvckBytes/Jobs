@@ -50,7 +50,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
@@ -84,7 +83,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.SmithingInventory;
 import org.bukkit.inventory.StonecutterInventory;
 import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
@@ -104,7 +102,6 @@ import com.gamingmesh.jobs.api.JobsChunkChangeEvent;
 import com.gamingmesh.jobs.config.JLC;
 import com.gamingmesh.jobs.container.ActionType;
 import com.gamingmesh.jobs.container.ExploreRespond;
-import com.gamingmesh.jobs.container.FastPayment;
 import com.gamingmesh.jobs.container.JobItems;
 import com.gamingmesh.jobs.container.JobProgression;
 import com.gamingmesh.jobs.container.JobsMobSpawner;
@@ -128,9 +125,7 @@ import net.Zrips.CMILib.Items.CMIItemStack;
 import net.Zrips.CMILib.Items.CMIMC;
 import net.Zrips.CMILib.Items.CMIMaterial;
 import net.Zrips.CMILib.Locale.LC;
-import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Messages.CMIMessages;
-import net.Zrips.CMILib.PersistentData.CMIPersistentDataContainer;
 import net.Zrips.CMILib.Version.Version;
 import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
 import uk.antiperson.stackmob.entity.StackEntity;
@@ -470,17 +465,6 @@ public final class JobsPaymentListener implements Listener {
             return;
 
         BlockActionInfo bInfo = new BlockActionInfo(block, ActionType.BREAK);
-
-        FastPayment fp = Jobs.FASTPAYMENT.get(player.getUniqueId());
-        if (fp != null) {
-            if (fp.getTime() > System.currentTimeMillis() && (fp.getInfo().getName().equalsIgnoreCase(bInfo.getName()) ||
-                    fp.getInfo().getNameWithSub().equalsIgnoreCase(bInfo.getNameWithSub()))) {
-                Jobs.perform(fp.getPlayer(), fp.getInfo(), fp.getPayment(), fp.getJob(), block, null, null);
-                return;
-            }
-
-            Jobs.FASTPAYMENT.remove(player.getUniqueId());
-        }
 
         if (!payForItemDurabilityLoss(player))
             return;
@@ -1951,52 +1935,4 @@ public final class JobsPaymentListener implements Listener {
             return size() > MAX_ENTRIES;
         }
     };
-
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onEvent(BlockPhysicsEvent event) {
-        if (!Jobs.getGCManager().payForAbove)
-            return;
-        if (event.getBlock().getType().equals(Material.AIR))
-            return;
-        final Block block = event.getBlock();
-
-        CMIMaterial mat = CMIMaterial.get(block);
-
-        if (!mat.equals(CMIMaterial.SUGAR_CANE) && !mat.equals(CMIMaterial.BAMBOO) && !mat.equals(CMIMaterial.KELP_PLANT) && !mat.equals(CMIMaterial.WEEPING_VINES) && !mat.equals(
-                CMIMaterial.WEEPING_VINES_PLANT))
-            return;
-
-        if (!Jobs.getGCManager().canPerformActionInWorld(block.getWorld()))
-            return;
-
-        if (event.getSourceBlock().equals(event.getBlock()))
-            return;
-
-        if ((mat.equals(CMIMaterial.SUGAR_CANE) || mat.equals(CMIMaterial.BAMBOO) || mat.equals(CMIMaterial.KELP_PLANT)) &&
-                event.getBlock().getLocation().getBlockY() <= event.getSourceBlock().getLocation().getBlockY())
-            return;
-
-        if ((mat.equals(CMIMaterial.WEEPING_VINES) || mat.equals(CMIMaterial.WEEPING_VINES_PLANT)) &&
-                event.getBlock().getLocation().getBlockY() >= event.getSourceBlock().getLocation().getBlockY())
-            return;
-
-        Location loc = event.getSourceBlock().getLocation().clone();
-        UUID uuid = breakCache.get(CMILocation.toString(loc, ":", true, true));
-        if (uuid == null)
-            return;
-
-        BlockActionInfo bInfo = new BlockActionInfo(block, ActionType.BREAK);
-        FastPayment fp = Jobs.FASTPAYMENT.get(uuid);
-        if (fp == null)
-            return;
-        if (!fp.getInfo().getType().equals(ActionType.BREAK) || !fp.getInfo().getNameWithSub().equals(bInfo.getNameWithSub()))
-            return;
-
-        if (fp.getTime() > System.currentTimeMillis() - 50L && (fp.getInfo().getName().equalsIgnoreCase(bInfo.getName()) ||
-                fp.getInfo().getNameWithSub().equalsIgnoreCase(bInfo.getNameWithSub()))) {
-            Jobs.perform(fp.getPlayer(), fp.getInfo(), fp.getPayment(), fp.getJob(), block, null, null);
-            breakCache.put(CMILocation.toString(block.getLocation(), ":", true, true), uuid);
-            fp.setTime(System.currentTimeMillis() + 45);
-        }
-    }
 }

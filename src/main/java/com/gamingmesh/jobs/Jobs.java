@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -74,7 +73,6 @@ import com.gamingmesh.jobs.container.Boost;
 import com.gamingmesh.jobs.container.Convert;
 import com.gamingmesh.jobs.container.CurrencyLimit;
 import com.gamingmesh.jobs.container.CurrencyType;
-import com.gamingmesh.jobs.container.FastPayment;
 import com.gamingmesh.jobs.container.Job;
 import com.gamingmesh.jobs.container.JobInfo;
 import com.gamingmesh.jobs.container.JobProgression;
@@ -189,13 +187,6 @@ public final class Jobs extends JavaPlugin {
     private static boolean hasLimitedItems = false;
 
     public static boolean fullyLoaded = false;
-
-    private static final int MAX_ENTRIES = 20;
-    public static final LinkedHashMap<UUID, FastPayment> FASTPAYMENT = new LinkedHashMap<UUID, FastPayment>(MAX_ENTRIES + 1, .75F, false) {
-        protected boolean removeEldestEntry(Map.Entry<UUID, FastPayment> eldest) {
-            return size() > MAX_ENTRIES;
-        }
-    };
 
     protected static VersionChecker versionCheckManager;
     protected static SelectionManager smanager;
@@ -1375,8 +1366,6 @@ public final class Jobs extends JavaPlugin {
                     payments.put(CurrencyType.POINTS, pointAmount);
                 if (expAmount != 0D)
                     payments.put(CurrencyType.EXP, expAmount);
-
-                FASTPAYMENT.put(jPlayer.getUniqueId(), new FastPayment(jPlayer, info, new BufferedPayment(jPlayer.getPlayer(), payments), prog.getJob()));
 
                 // FinalPayment event
                 CMIScheduler.runTaskAsynchronously(getInstance(), () -> Bukkit.getServer().getPluginManager().callEvent(new JobsInstancePaymentEvent(jPlayer.getPlayer(), payments)));

@@ -112,7 +112,7 @@ public class GeneralConfigManager {
 			EmptyServerAccountChat, EmptyServerAccountActionBar, ShowTotalWorkers, ShowPenaltyBonus, useDynamicPayment, JobsGUIOpenOnBrowse, JobsGUIShowChatBrowse, JobsGUISwitcheButtons, ShowActionNames, hideItemAttributes,
 			DisableJoiningJobThroughGui, FireworkLevelupUse, UseRandom, UsePerPermissionForLeaving, EnableConfirmation, jobsInfoOpensBrowse, MonsterDamageUse, MonsterDamageIgnoreBosses, tameablesPayout, useMaxPaymentCurve,
 			blockOwnershipTakeOver, blockOwnershipDisabled, hideJobsInfoWithoutPermission, UseTaxes, TransferToServerAccount, TakeFromPlayersPayment, AutoJobJoinUse, AllowDelevel, RomanNumbers, BossBarEnabled = false, ActionBarEnabled,
-			ExploreCompact, ExploreSaveIntoDatabase = false, DBCleaningJobsUse, DBCleaningUsersUse, DisabledWorldsUse, UseAsWhiteListWorldList, MythicMobsEnabled, LoggingUse, payForCombiningItems, payForStackedEntities, payForAbove = false,
+			ExploreCompact, ExploreSaveIntoDatabase = false, DBCleaningJobsUse, DBCleaningUsersUse, DisabledWorldsUse, UseAsWhiteListWorldList, MythicMobsEnabled, LoggingUse, payForCombiningItems, payForStackedEntities,
 			payForEachVTradeItem, allowEnchantingBoostedItems, preventShopItemEnchanting, useCustomFishingOnly = false, boostPersistenceEnabled = true;
 	public MessageToggleState BossBarsMessageDefault = MessageToggleState.Rapid;
 	public MessageToggleState ActionBarsMessageDefault = MessageToggleState.Rapid;
@@ -547,9 +547,6 @@ public class GeneralConfigManager {
 		 * "This option is only related to: sugar_cane, cactus, kelp, bamboo");
 		 * preventCropResizePayment = c.get("prevent-crop-resize-payment", false);
 		 */
-
-		c.addComment("pay-for-above", "When enabled we will try to pay player for blocks above broken ones. This only applies to sugarcane, bamboo, kelp and weeping_vines");
-		payForAbove = c.get("pay-for-above", false);
 
 		c.addComment("pay-for-stacked-entities", "Allows to pay for stacked entities for each one. Requires StackMob, WildStacker or RoseStacker.");
 		payForStackedEntities = c.get("pay-for-stacked-entities", false);
